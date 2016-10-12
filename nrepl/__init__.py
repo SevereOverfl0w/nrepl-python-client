@@ -29,7 +29,7 @@ __all__ = ['connect', 'WatchableConnection']
 
 def _bencode_connect(uri):
     s = socket.create_connection(uri.netloc.split(":"))
-    f = s.makefile('rw')
+    f = s.makefile('rwb')
     return bencode.BencodeIO(f, on_close=s.close)
 
 

@@ -97,7 +97,7 @@ _read_fns = {b"i": _read_int,
 
 def _read_datum(s):
     delim = _read_delimiter(s)
-    if delim is not b'':
+    if delim != b'':
         return _read_fns.get(delim, lambda s: _read_bytes(s, delim))(s)
 
 
