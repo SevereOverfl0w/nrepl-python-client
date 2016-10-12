@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# coding=utf-8
+
 import os, unittest, subprocess, re, signal, time
 import nrepl
 from collections import OrderedDict
@@ -28,6 +30,10 @@ class BencodeTest (unittest.TestCase):
         self.assertEqual([''], list(decode('0:')))
         self.assertEqual([['spam', '', 'a', 'ab']], list(decode('l4:spam0:1:a2:abe')))
         self.assertEqual([{'spam': ''}], list(decode('d4:spam0:e')))
+
+    def test_unicode_string(self):
+        self.assertEqual([u'á'], list(decode(u'2:á')))
+        self.assertEqual(u'2:á', encode(u'á'))
 
 class REPLTest (unittest.TestCase):
     def setUp (self):

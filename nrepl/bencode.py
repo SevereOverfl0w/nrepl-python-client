@@ -17,6 +17,8 @@ except ImportError:
     from io import StringIO
 
 import sys
+from io import BytesIO
+import array
 
 # Some code so we can use different features without worrying about versions.
 PY2 = sys.version_info[0] == 2
@@ -42,11 +44,11 @@ def _read_int(s, terminator=None, init_data=None):
             break
         else:
             int_chrs.append(c)
-    return int(''.join(int_chrs))
+    return int(b''.join(int_chrs))
 
 
 def _read_bytes(s, n):
-    data = StringIO('')
+    data = BytesIO()
     cnt = 0
     while cnt < n:
         m = s.read(n - cnt)
@@ -85,17 +87,17 @@ def _read_map(s):
     return dict(zip(i, i))
 
 
-_read_fns = {"i": _read_int,
-             "l": _read_list,
-             "d": _read_map,
-             "e": lambda _: None,
+_read_fns = {b"i": _read_int,
+             b"l": _read_list,
+             b"d": _read_map,
+             b"e": lambda _: None,
              # EOF
              None: lambda _: None}
 
 
 def _read_datum(s):
     delim = _read_delimiter(s)
-    if delim is not '':
+    if delim is not b'':
         return _read_fns.get(delim, lambda s: _read_bytes(s, delim))(s)
 
 
@@ -104,32 +106,32 @@ def _write_datum(x, out):
         # x = x.encode("UTF-8")
         # TODO revisit encodings, this is surely not right. Python
         # (2.x, anyway) conflates bytes and strings, but 3.x does not...
-        out.write(str(len(x)))
-        out.write(":")
-        out.write(x)
+        out.write(str(len(x.encode('utf-8'))).encode('utf-8'))
+        out.write(b":")
+        out.write(x.encode('utf-8'))
     elif isinstance(x, int):
-        out.write("i")
-        out.write(str(x))
-        out.write("e")
+        out.write(b"i")
+        out.write(str(x).encode('utf-8'))
+        out.write(b"e")
     elif isinstance(x, (list, tuple)):
-        out.write("l")
+        out.write(b"l")
         for v in x:
             _write_datum(v, out)
-        out.write("e")
+        out.write(b"e")
     elif isinstance(x, dict):
-        out.write("d")
+        out.write(b"d")
         for k, v in x.items():
             _write_datum(k, out)
             _write_datum(v, out)
-        out.write("e")
+        out.write(b"e")
     out.flush()
 
 
 def encode(v):
     "bencodes the given value, may be a string, integer, list, or dict."
-    s = StringIO()
+    s = BytesIO()
     _write_datum(v, s)
-    return s.getvalue()
+    return s.getvalue().decode('utf-8')
 
 
 def decode_file(file):
@@ -142,7 +144,7 @@ def decode_file(file):
 
 def decode(string):
     "Generator that yields decoded values from the input string."
-    return decode_file(StringIO(string))
+    return decode_file(BytesIO(string.encode('utf-8')))
 
 
 class BencodeIO(object):
