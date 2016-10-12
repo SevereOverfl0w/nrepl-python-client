@@ -12,7 +12,7 @@
 
 
 try:
-    from cStringIO import StringIO
+    from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
