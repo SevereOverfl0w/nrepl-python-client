@@ -23,6 +23,12 @@ class BencodeTest (unittest.TestCase):
         self.assertEqual([{u'a': 1, u'c': [{u'x': [u'y']}], u'b': [2, [3]]}],
                 list(decode('d1:ai1e1:cld1:xl1:yeee1:bli2eli3eeee')))
 
+    def test_empty_string (self):
+        self.assertEqual(['a'], list(decode('1:a')))
+        self.assertEqual([''], list(decode('0:')))
+        self.assertEqual([['spam', '', 'a', 'ab']], list(decode('l4:spam0:1:a2:abe')))
+        self.assertEqual([{'spam': ''}], list(decode('d4:spam0:e')))
+
 class REPLTest (unittest.TestCase):
     def setUp (self):
         # this here only to accommodate travis, which puts leiningen @ lein2

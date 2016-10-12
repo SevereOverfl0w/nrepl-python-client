@@ -46,7 +46,7 @@ def _read_int(s, terminator=None, init_data=None):
 
 
 def _read_bytes(s, n):
-    data = StringIO()
+    data = StringIO('')
     cnt = 0
     while cnt < n:
         m = s.read(n - cnt)
@@ -95,7 +95,7 @@ _read_fns = {"i": _read_int,
 
 def _read_datum(s):
     delim = _read_delimiter(s)
-    if delim:
+    if delim is not '':
         return _read_fns.get(delim, lambda s: _read_bytes(s, delim))(s)
 
 
@@ -135,7 +135,7 @@ def encode(v):
 def decode_file(file):
     while True:
         x = _read_datum(file)
-        if not x:
+        if x is None:
             break
         yield x
 
