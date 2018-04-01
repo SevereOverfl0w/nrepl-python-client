@@ -19,7 +19,7 @@ class BencodeTest (unittest.TestCase):
         # Python3 treats dicts differently. For the sake of testing we use a
         # ordered dict so the order does not change.
         test_values = OrderedDict((("a", 1), ("b", [2, [3]]), ("c", [{"x": ["y"]}])))
-        
+
         self.assertEqual('d1:ai1e1:bli2eli3eee1:cld1:xl1:yeeee',
                 encode(test_values))
         self.assertEqual([{u'a': 1, u'c': [{u'x': [u'y']}], u'b': [2, [3]]}],
