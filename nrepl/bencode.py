@@ -40,7 +40,7 @@ def _read_int(s, terminator=None, init_data=None):
     int_chrs = init_data or []
     while True:
         c = _read_byte(s)
-        if not c.isdigit() or c == terminator or not c:
+        if not (c.isdigit() or c == b'-') or c == terminator or not c:
             break
         else:
             int_chrs.append(c)
